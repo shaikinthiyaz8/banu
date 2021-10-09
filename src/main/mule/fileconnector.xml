@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" xmlns:file="http://www.mulesoft.org/schema/mule/file"
+	xmlns:http="http://www.mulesoft.org/schema/mule/http"
+	xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd
+http://www.mulesoft.org/schema/mule/file http://www.mulesoft.org/schema/mule/file/current/mule-file.xsd
+http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd">
+	<http:listener-config name="HTTP_Listener_config" doc:name="HTTP Listener config" doc:id="9c5966a7-f16a-4e50-8e98-b7a67b327665" >
+		<http:listener-connection host="0.0.0.0" port="8081" />
+	</http:listener-config>
+	<flow name="fileconnectorFlow" doc:id="a9a23885-5679-4571-a926-e0ca49d55b64" >
+		<http:listener doc:name="Listener" doc:id="118ba4b7-7f46-4531-a5e6-30fe765d7154" config-ref="HTTP_Listener_config" path="/file"/>
+		<ee:transform doc:name="Transform Message" doc:id="0382a65c-bf13-4c51-b570-ec5fca25b935" >
+			<ee:message >
+				<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+---
+ payload]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+		<logger level="INFO" doc:name="Logger" doc:id="d8e97af2-76ae-4ecb-949c-f71e3984a0a0" message="#[payload]"/>
+		<file:write doc:id="2be11963-24f5-49fa-b671-445f38141de3" path="C:\Users\Dell\AnypointStudio\studio-workspace\fileconnector\src\main\resources\write"/>
+		<ee:transform doc:name="Transform Message" doc:id="9591565a-b52c-4daf-8c3b-9839d64c19bb" >
+			<ee:message >
+				<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+---
+{
+	"message" : "file has been uploaded successfully"
+}]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+	</flow>
+</mule>
